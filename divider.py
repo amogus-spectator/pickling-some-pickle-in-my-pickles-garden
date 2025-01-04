@@ -35,17 +35,8 @@ class Randomizer:
     
     def randomize(self):
         return randint(self.lower_bound, self.upper_bound)
-def main():
-    def generate_agents(num_agents, value_range):
-        agents = []
-        for i in range(num_agents):
-            local_value = randint(value_range[0], value_range[1])
-            agent = Agent(local_value, f"agent_{i}")
-            agents.append(agent)
-        return agents
     
-    r = generate_agents(64, [1, 100])
-    
+def generation(agents_generator):
     def div(agents_generator_list, divisor):
         agent_partitions = []
         processing_list = agents_generator_list
@@ -60,7 +51,7 @@ def main():
             agent_partitions.append(processing_list)
         return agent_partitions
     
-    agent_pairs = div(r, 2)
+    agent_pairs = div(agents_generator, 2)
     
     def comparator(agent1, agent2):
         agent1.generate_new_value(1, 100)
@@ -70,6 +61,15 @@ def main():
         elif agent1.get_value() < agent2.get_value():
             return agent2
         elif agent1.get_value() == agent2.get_value():
+            return 1
+        
+    def comparartor_bin(agent1, agent2):
+        r = comparator(agent1, agent2)
+        if r == 1:
+            return 1
+        elif r == agent1:
+            return 0
+        elif r == agent2:
             return 1
         
     def simulate(agents_list):
@@ -90,9 +90,19 @@ def main():
             agent_pairs = agent_pairs[1:]
         simulator_result.append(simulate(agent_pairs[0]))
         agent_pairs = agent_pairs[1:]
-    print(simulator_result)
-    plt.plot(simulator_result)
-    plt.show()
+    return simulator_result
+def main():
+    def generate_agents(num_agents, value_range):
+        agents = []
+        for i in range(num_agents):
+            local_value = randint(value_range[0], value_range[1])
+            agent = Agent(local_value, f"agent_{i}")
+            agents.append(agent)
+        return agents
     
+    r = generate_agents(64, [1, 100])
+    
+    
+
 if __name__ == "__main__":
     main()
